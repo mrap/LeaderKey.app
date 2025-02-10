@@ -125,18 +125,22 @@ class Controller {
   }
 
   private func charForEvent(_ event: NSEvent) -> String? {
-    if Defaults[.forceEnglishKeyboardLayout] {
-      if let mapped = ENGLISH_KEYMAP[event.keyCode] {
-        // Check if Shift is pressed and convert to uppercase if so
-        if event.modifierFlags.contains(.shift) {
-          return mapped.uppercased()
+    // Handle special keys first
+    switch event.keyCode {
+    case KeyHelpers.Return.rawValue:
+      return "<return>"
+    default:
+      if Defaults[.forceEnglishKeyboardLayout] {
+        if let mapped = ENGLISH_KEYMAP[event.keyCode] {
+          // Check if Shift is pressed and convert to uppercase if so
+          if event.modifierFlags.contains(.shift) {
+            return mapped.uppercased()
+          }
+          return mapped
         }
-
-        return mapped
       }
+      return event.charactersIgnoringModifiers
     }
-
-    return event.charactersIgnoringModifiers
   }
 
   private func positionCheatsheetWindow() {
